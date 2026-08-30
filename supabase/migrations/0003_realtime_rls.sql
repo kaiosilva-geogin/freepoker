@@ -21,7 +21,8 @@ grant usage on schema private to authenticated;
 revoke execute on all functions in schema private from public, anon, authenticated;
 grant execute on function private.pode_acessar_topico(text, uuid) to authenticated;
 
-alter table realtime.messages enable row level security;
+-- O Supabase já mantém RLS habilitado em realtime.messages. O schema
+-- realtime é administrado pelo serviço e não permite ALTER TABLE.
 
 drop policy if exists "participantes recebem eventos da sala" on realtime.messages;
 create policy "participantes recebem eventos da sala"
