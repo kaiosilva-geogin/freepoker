@@ -448,6 +448,11 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
     grid-template-columns: 2rem minmax(0, 1fr) auto;
     min-height: 4rem;
     padding: 0.7rem 1rem;
+    transition: background 160ms ease;
+  }
+
+  :global(.participant--voted) {
+    background: linear-gradient(90deg, var(--cor-petroleo-superficie), transparent 72%);
   }
 
   :global(.participant__avatar) {
@@ -487,9 +492,46 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
     font-size: 0.7rem;
   }
 
-  :global(.participant__state--voted) {
-    color: var(--cor-sucesso);
-    font-weight: 600;
+  :global(.participant__actions) {
+    align-items: center;
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    min-width: 4.3rem;
+  }
+
+  :global(.participant__voted-card) {
+    align-items: center;
+    background: var(--cor-petroleo);
+    border: 1px solid var(--cor-petroleo-escuro);
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgb(7 63 71 / 22%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.14rem;
+    height: 2rem;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    width: 1.42rem;
+  }
+
+  :global(.participant__voted-card::after) {
+    background: var(--cor-ambar);
+    bottom: 0;
+    content: "";
+    height: 0.14rem;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  :global(.participant__voted-card i) {
+    background: rgb(255 255 255 / 88%);
+    border-radius: 99px;
+    display: block;
+    height: 0.11rem;
+    width: 0.58rem;
   }
 
   :global(.participant__remove) {

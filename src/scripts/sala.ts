@@ -202,7 +202,7 @@ function renderizarParticipantes() {
   elementos.participants.replaceChildren(
     ...estado.participantes.map((participante) => {
       const item = document.createElement("li");
-      item.className = "participant";
+      item.className = `participant ${participante.votou ? "participant--voted" : ""}`;
 
       const avatar = document.createElement("span");
       avatar.className = "participant__avatar";
@@ -218,19 +218,34 @@ function renderizarParticipantes() {
       meta.textContent = participante.proprietario ? "Proprietário" : participante.id === estado?.participante_atual?.id ? "Você" : "Participante";
       info.append(nome, meta);
 
-      const acao = document.createElement(participante.proprietario || !estado?.sala.proprietario ? "span" : "button");
-      if (acao instanceof HTMLButtonElement) {
-        acao.type = "button";
-        acao.className = "participant__remove";
-        acao.setAttribute("aria-label", `Remover ${participante.nome}`);
-        acao.textContent = "×";
-        acao.addEventListener("click", () => abrirRemocao(participante.id, participante.nome));
+      const acoes = document.createElement("div");
+      acoes.className = "participant__actions";
+
+      if (participante.votou) {
+        const carta = document.createElement("span");
+        carta.className = "participant__voted-card";
+        carta.setAttribute("aria-label", "Voto registrado");
+        carta.setAttribute("role", "img");
+        carta.innerHTML = '<i></i><i></i><i></i>';
+        acoes.append(carta);
       } else {
-        acao.className = `participant__state ${participante.votou ? "participant__state--voted" : ""}`;
-        acao.textContent = participante.votou ? "Votou" : "Aguardando";
+        const estadoVoto = document.createElement("span");
+        estadoVoto.className = "participant__state";
+        estadoVoto.textContent = "Aguardando";
+        acoes.append(estadoVoto);
       }
 
-      item.append(avatar, info, acao);
+      if (!participante.proprietario && estado?.sala.proprietario) {
+        const remover = document.createElement("button");
+        remover.type = "button";
+        remover.className = "participant__remove";
+        remover.setAttribute("aria-label", `Remover ${participante.nome}`);
+        remover.textContent = "×";
+        remover.addEventListener("click", () => abrirRemocao(participante.id, participante.nome));
+        acoes.append(remover);
+      }
+
+      item.append(avatar, info, acoes);
       return item;
     }),
   );
