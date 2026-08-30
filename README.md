@@ -46,6 +46,29 @@ npm run deploy
 
 Cadastre `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_PUBLISHABLE_KEY` no ambiente de build da Cloudflare. Esses valores são chaves públicas protegidas pelas políticas e funções do banco; nenhuma chave administrativa é utilizada pela aplicação.
 
+### Deploy automático pelo GitHub
+
+No painel da Cloudflare, abra **Workers & Pages**, escolha **Create application** e importe o repositório `kaiosilva-geogin/freepoker`. Use estas configurações:
+
+```text
+Worker name: freepoker
+Production branch: main
+Root directory: /
+Build command: npm run build
+Deploy command: npm run deploy
+```
+
+Em **Build variables**, adicione:
+
+```text
+PUBLIC_SUPABASE_URL
+PUBLIC_SUPABASE_PUBLISHABLE_KEY
+```
+
+Essas variáveis precisam existir durante o build porque o Astro as inclui no cliente web. Não utilize a chave `service_role` ou outra chave secreta administrativa.
+
+Depois de salvar, cada push na branch `main` iniciará um novo build e deploy. Para conectar um domínio próprio, abra o Worker criado e use **Settings → Domains & Routes → Add → Custom Domain**.
+
 ## Estrutura
 
 - `src/pages/index.astro`: página institucional, criação e entrada.
