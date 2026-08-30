@@ -1,0 +1,31 @@
+{
+  "name": "freepoker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate": "npm test && npm run build",
+    "deploy:dry": "wrangler deploy --dry-run --config dist/server/wrangler.json",
+    "deploy": "wrangler deploy --config dist/server/wrangler.json"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "latest",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@supabase/supabase-js": "latest",
+    "astro": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "@types/node": "latest",
+    "typescript": "latest",
+    "vitest": "latest",
+    "wrangler": "latest"
+  }
+}

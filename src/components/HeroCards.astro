@@ -1,0 +1,159 @@
+<div class="hero-cards" aria-label="Exemplo de cartas de estimativa">
+  <div class="hero-card hero-card--back" aria-hidden="true">
+    <span class="hero-card__corner">3</span>
+    <strong>3</strong>
+  </div>
+  <div class="hero-card hero-card--middle" aria-hidden="true">
+    <span class="hero-card__corner">5</span>
+    <strong>5</strong>
+  </div>
+  <div class="hero-card hero-card--front" aria-hidden="true">
+    <span class="hero-card__corner">8</span>
+    <strong>8</strong>
+    <span class="hero-card__status">Escolhida</span>
+  </div>
+  <div class="hero-cards__note">
+    <span class="status-dot"></span>
+    Votação em andamento
+  </div>
+</div>
+
+<style>
+  .hero-cards {
+    height: 28rem;
+    margin-inline: auto;
+    max-width: 31rem;
+    position: relative;
+    width: 100%;
+  }
+
+  .hero-card {
+    align-items: center;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda-forte);
+    border-radius: 0.75rem;
+    box-shadow: var(--sombra-media);
+    display: flex;
+    height: 17.5rem;
+    justify-content: center;
+    position: absolute;
+    width: 12rem;
+  }
+
+  .hero-card strong {
+    color: var(--cor-texto);
+    font-size: 5.5rem;
+    font-weight: 500;
+    letter-spacing: -0.065em;
+    line-height: 1;
+  }
+
+  .hero-card__corner {
+    color: var(--cor-texto-secundario);
+    font-family: var(--fonte-mono);
+    font-size: 1rem;
+    font-weight: 500;
+    left: 1rem;
+    position: absolute;
+    top: 0.85rem;
+  }
+
+  .hero-card--back {
+    left: 1rem;
+    top: 4.5rem;
+    transform: rotate(-8deg);
+  }
+
+  .hero-card--middle {
+    left: 50%;
+    top: 2rem;
+    transform: translateX(-50%) rotate(-1.5deg);
+  }
+
+  .hero-card--front {
+    border: 2px solid var(--cor-petroleo);
+    right: 1rem;
+    top: 5rem;
+    transform: rotate(6deg);
+  }
+
+  .hero-card--front::after {
+    background: var(--cor-ambar);
+    border-radius: 0 0 0.6rem 0.6rem;
+    bottom: 0;
+    content: "";
+    height: 0.35rem;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  .hero-card__status {
+    background: var(--cor-petroleo-suave);
+    border-radius: 99px;
+    bottom: 1rem;
+    color: var(--cor-petroleo-escuro);
+    font-size: 0.72rem;
+    font-weight: 600;
+    left: 50%;
+    padding: 0.3rem 0.65rem;
+    position: absolute;
+    transform: translateX(-50%);
+  }
+
+  .hero-cards__note {
+    align-items: center;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 0.5rem;
+    bottom: 0.5rem;
+    box-shadow: var(--sombra-baixa);
+    color: var(--cor-texto-secundario);
+    display: flex;
+    font-size: 0.82rem;
+    gap: 0.55rem;
+    left: 50%;
+    padding: 0.65rem 0.85rem;
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .status-dot {
+    background: var(--cor-sucesso);
+    border: 3px solid var(--cor-sucesso-suave);
+    border-radius: 50%;
+    height: 0.75rem;
+    width: 0.75rem;
+  }
+
+  @media (max-width: 600px) {
+    .hero-cards {
+      height: 21rem;
+      max-width: 22rem;
+    }
+
+    .hero-card {
+      height: 13rem;
+      width: 8.8rem;
+    }
+
+    .hero-card strong {
+      font-size: 4rem;
+    }
+
+    .hero-card--back {
+      left: 0.5rem;
+      top: 3.5rem;
+    }
+
+    .hero-card--middle {
+      top: 1.5rem;
+    }
+
+    .hero-card--front {
+      right: 0.5rem;
+      top: 3.8rem;
+    }
+  }
+</style>

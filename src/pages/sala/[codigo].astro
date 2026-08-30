@@ -1,0 +1,681 @@
+---
+import Brand from "../../components/Brand.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { codigoSalaValido, normalizarCodigoSala } from "../../lib/codigo-sala";
+
+const codigo = normalizarCodigoSala(Astro.params.codigo ?? "");
+if (!codigoSalaValido(codigo)) Astro.response.status = 404;
+---
+
+<BaseLayout title={`${codigo || "Sala"} — FreePoker`} description="Sala de estimativa do FreePoker.">
+  <div class="room-app" data-room-code={codigo}>
+    <header class="room-header">
+      <div class="container room-header__inner">
+        <Brand compact />
+        <div class="room-header__details" aria-live="polite">
+          <strong data-room-name>Carregando sala…</strong>
+          <span class="room-code"><span data-room-code-text>{codigo}</span></span>
+          <button class="button button--ghost button--small" type="button" data-copy-room>
+            Copiar acesso
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="room-main container">
+      <section class="room-loading" data-room-loading>
+        <span class="loader" aria-hidden="true"></span>
+        <p>Preparando a sala…</p>
+      </section>
+
+      <section class="room-error" data-room-error hidden>
+        <p class="eyebrow">Não foi possível abrir a sala</p>
+        <h1 data-room-error-title>Sala indisponível</h1>
+        <p data-room-error-message>Verifique o código ou crie uma nova sala.</p>
+        <a class="button button--primary" href="/">Voltar à página inicial</a>
+      </section>
+
+      <div class="room-grid" data-room-content hidden>
+        <section class="voting-panel" aria-labelledby="voting-title">
+          <div class="voting-panel__heading">
+            <div>
+              <p class="eyebrow" data-round-label>Rodada 1</p>
+              <h1 id="voting-title" data-voting-title>Escolha uma carta</h1>
+              <p data-voting-description>Seu voto permanecerá oculto até a revelação.</p>
+            </div>
+            <span class="room-status" data-room-status>Votação aberta</span>
+          </div>
+
+          <div class="cards-grid" data-cards aria-label="Cartas disponíveis"></div>
+
+          <div class="results" data-results hidden>
+            <div class="results__summary">
+              <div>
+                <span>Média da equipe</span>
+                <strong data-average>—</strong>
+              </div>
+              <p data-average-detail>Apenas votos numéricos entram no cálculo.</p>
+            </div>
+            <div class="results__votes" data-result-votes></div>
+          </div>
+
+          <div class="owner-controls" data-owner-controls hidden>
+            <button class="button button--primary" type="button" data-reveal>Exibir votos</button>
+            <button class="button button--primary" type="button" data-new-round hidden>Nova votação</button>
+          </div>
+        </section>
+
+        <aside class="participants-panel" aria-labelledby="participants-title">
+          <div class="participants-panel__header">
+            <div>
+              <p class="eyebrow">Na sala</p>
+              <h2 id="participants-title">Participantes <span data-participant-count>0</span></h2>
+            </div>
+            <span class="live-indicator"><i></i> Ao vivo</span>
+          </div>
+          <ul class="participants-list" data-participants></ul>
+          <button class="button button--ghost leave-button" type="button" data-leave>Sair da sala</button>
+        </aside>
+      </div>
+    </main>
+
+    <dialog class="room-dialog" id="entrar-na-sala" aria-labelledby="join-title">
+      <div class="room-dialog__header">
+        <p class="eyebrow">Você foi convidado</p>
+        <h2 id="join-title">Como devemos chamar você?</h2>
+        <p>Seu nome ficará visível para as outras pessoas da sala.</p>
+      </div>
+      <form data-join-form>
+        <div class="field">
+          <label for="participant-name">Seu nome</label>
+          <input id="participant-name" name="nome" maxlength="40" autocomplete="name" required />
+        </div>
+        <p class="form-feedback" data-join-message aria-live="polite"></p>
+        <button class="button button--primary" type="submit">Entrar na sala</button>
+      </form>
+    </dialog>
+
+    <dialog class="room-dialog room-dialog--small" id="confirmar-remocao" aria-labelledby="remove-title">
+      <div class="room-dialog__header">
+        <p class="eyebrow">Organizar participantes</p>
+        <h2 id="remove-title">Remover da sala?</h2>
+        <p><strong data-remove-name></strong> perderá o acesso por esta sessão e seu voto será descartado.</p>
+      </div>
+      <div class="dialog-actions">
+        <button class="button button--secondary" type="button" data-cancel-remove>Cancelar</button>
+        <button class="button button--danger" type="button" data-confirm-remove>Remover participante</button>
+      </div>
+    </dialog>
+
+    <div class="toast" data-toast role="status" aria-live="polite" hidden></div>
+  </div>
+
+  <script>
+    import "../../scripts/sala";
+  </script>
+</BaseLayout>
+
+<style>
+  .room-app {
+    min-height: 100vh;
+  }
+
+  .room-header {
+    background: var(--cor-superficie);
+    border-bottom: 1px solid var(--cor-borda);
+  }
+
+  .room-header__inner {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    min-height: 4.5rem;
+  }
+
+  .room-header__details {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .room-header__details > strong {
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
+  }
+
+  .room-code {
+    background: var(--cor-superficie-alternativa);
+    border: 1px solid var(--cor-borda);
+    border-radius: 0.35rem;
+    color: var(--cor-texto-secundario);
+    font-family: var(--fonte-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .button--small {
+    min-height: 2.3rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .room-main {
+    padding-block: 2.5rem 4rem;
+  }
+
+  .room-loading,
+  .room-error {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 65vh;
+    text-align: center;
+  }
+
+  .room-loading[hidden],
+  .room-error[hidden],
+  .room-grid[hidden] {
+    display: none;
+  }
+
+  .room-loading p {
+    color: var(--cor-texto-secundario);
+  }
+
+  .loader {
+    animation: spin 800ms linear infinite;
+    border: 3px solid var(--cor-petroleo-suave);
+    border-radius: 50%;
+    border-top-color: var(--cor-petroleo);
+    height: 2rem;
+    width: 2rem;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .room-error h1 {
+    font-size: 2.4rem;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+
+  .room-error > p:not(.eyebrow) {
+    color: var(--cor-texto-secundario);
+    margin: 0.75rem 0 1.5rem;
+  }
+
+  .room-grid {
+    align-items: start;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+
+  .voting-panel,
+  .participants-panel {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 0.55rem;
+    box-shadow: var(--sombra-baixa);
+  }
+
+  .voting-panel {
+    min-height: 37rem;
+    padding: 2rem;
+  }
+
+  .voting-panel__heading {
+    align-items: start;
+    border-bottom: 1px solid var(--cor-borda);
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+  }
+
+  .voting-panel__heading h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+
+  .voting-panel__heading p:last-child {
+    color: var(--cor-texto-secundario);
+    margin: 0.5rem 0 0;
+  }
+
+  .room-status {
+    background: var(--cor-sucesso-suave);
+    border-radius: 99px;
+    color: var(--cor-sucesso);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  .cards-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(5.25rem, 1fr));
+    padding-block: 2.5rem;
+  }
+
+  :global(.vote-card) {
+    aspect-ratio: 0.72;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda-forte);
+    border-radius: 0.5rem;
+    color: var(--cor-texto);
+    font-family: var(--fonte-mono);
+    font-size: 1.65rem;
+    font-weight: 500;
+    min-height: 7.4rem;
+    position: relative;
+    transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+  }
+
+  :global(.vote-card:hover:not(:disabled)) {
+    border-color: var(--cor-petroleo);
+    box-shadow: 0 5px 14px rgb(23 36 42 / 10%);
+    transform: translateY(-2px);
+  }
+
+  :global(.vote-card[aria-pressed="true"]) {
+    background: var(--cor-petroleo-superficie);
+    border: 2px solid var(--cor-petroleo);
+    box-shadow: 0 6px 16px rgb(7 94 104 / 14%);
+  }
+
+  :global(.vote-card[aria-pressed="true"]::after) {
+    background: var(--cor-ambar);
+    border-radius: 0 0 0.4rem 0.4rem;
+    bottom: 0;
+    content: "";
+    height: 0.28rem;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  :global(.vote-card:disabled) {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .owner-controls {
+    border-top: 1px solid var(--cor-borda);
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1.5rem;
+  }
+
+  .owner-controls[hidden] {
+    display: none;
+  }
+
+  .results[hidden] {
+    display: none;
+  }
+
+  .results__summary {
+    align-items: center;
+    background: var(--cor-petroleo-superficie);
+    border: 1px solid var(--cor-petroleo-suave);
+    display: flex;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .results__summary div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .results__summary span,
+  .results__summary p {
+    color: var(--cor-texto-secundario);
+    font-size: 0.78rem;
+  }
+
+  .results__summary strong {
+    color: var(--cor-petroleo-escuro);
+    font-family: var(--fonte-mono);
+    font-size: 2.5rem;
+  }
+
+  .results__summary p {
+    margin: 0;
+  }
+
+  .results__votes {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    padding-block: 1.5rem;
+  }
+
+  :global(.result-vote) {
+    align-items: center;
+    border: 1px solid var(--cor-borda);
+    border-radius: 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 7rem;
+    justify-content: center;
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  :global(.result-vote strong) {
+    font-family: var(--fonte-mono);
+    font-size: 1.8rem;
+  }
+
+  :global(.result-vote span) {
+    color: var(--cor-texto-secundario);
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .participants-panel {
+    overflow: hidden;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .participants-panel__header {
+    align-items: start;
+    border-bottom: 1px solid var(--cor-borda);
+    display: flex;
+    justify-content: space-between;
+    padding: 1.25rem;
+  }
+
+  .participants-panel__header .eyebrow {
+    margin-bottom: 0.25rem;
+  }
+
+  .participants-panel h2 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .participants-panel h2 span {
+    color: var(--cor-texto-suave);
+    font-family: var(--fonte-mono);
+    font-size: 0.8rem;
+  }
+
+  .live-indicator {
+    align-items: center;
+    color: var(--cor-sucesso);
+    display: flex;
+    font-size: 0.7rem;
+    gap: 0.35rem;
+  }
+
+  .live-indicator i {
+    background: var(--cor-sucesso);
+    border: 3px solid var(--cor-sucesso-suave);
+    border-radius: 50%;
+    height: 0.65rem;
+    width: 0.65rem;
+  }
+
+  .participants-list {
+    list-style: none;
+    margin: 0;
+    max-height: 28rem;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  :global(.participant) {
+    align-items: center;
+    border-bottom: 1px solid var(--cor-borda);
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    min-height: 4rem;
+    padding: 0.7rem 1rem;
+  }
+
+  :global(.participant__avatar) {
+    align-items: center;
+    background: var(--cor-petroleo-suave);
+    border-radius: 0.35rem;
+    color: var(--cor-petroleo-escuro);
+    display: flex;
+    font-size: 0.78rem;
+    font-weight: 600;
+    height: 2rem;
+    justify-content: center;
+    text-transform: uppercase;
+    width: 2rem;
+  }
+
+  :global(.participant__info) {
+    min-width: 0;
+  }
+
+  :global(.participant__name) {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.participant__meta) {
+    color: var(--cor-texto-suave);
+    font-size: 0.7rem;
+  }
+
+  :global(.participant__state) {
+    color: var(--cor-texto-suave);
+    font-size: 0.7rem;
+  }
+
+  :global(.participant__state--voted) {
+    color: var(--cor-sucesso);
+    font-weight: 600;
+  }
+
+  :global(.participant__remove) {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0.3rem;
+    color: var(--cor-texto-suave);
+    display: flex;
+    font-size: 1.15rem;
+    height: 1.8rem;
+    justify-content: center;
+    padding: 0;
+    width: 1.8rem;
+  }
+
+  :global(.participant__remove:hover) {
+    background: var(--cor-perigo-suave);
+    color: var(--cor-perigo);
+  }
+
+  .leave-button {
+    border-top: 1px solid var(--cor-borda);
+    border-radius: 0;
+    font-size: 0.78rem;
+    width: 100%;
+  }
+
+  .room-dialog {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda-forte);
+    border-radius: 0.6rem;
+    box-shadow: 0 24px 70px rgb(23 36 42 / 24%);
+    color: var(--cor-texto);
+    max-width: 28rem;
+    padding: 0;
+    width: calc(100% - 2rem);
+  }
+
+  .room-dialog--small {
+    max-width: 25rem;
+  }
+
+  .room-dialog::backdrop {
+    background: rgb(7 31 35 / 58%);
+    backdrop-filter: blur(3px);
+  }
+
+  .room-dialog__header {
+    border-bottom: 1px solid var(--cor-borda);
+    padding: 1.5rem;
+  }
+
+  .room-dialog__header .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  .room-dialog__header h2 {
+    font-size: 1.45rem;
+    margin: 0;
+  }
+
+  .room-dialog__header p:last-child {
+    color: var(--cor-texto-secundario);
+    line-height: 1.5;
+    margin: 0.6rem 0 0;
+  }
+
+  .room-dialog form {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .form-feedback {
+    color: var(--cor-perigo);
+    font-size: 0.78rem;
+    margin: 0;
+    min-height: 1rem;
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  .toast {
+    background: var(--cor-texto);
+    border-radius: 0.4rem;
+    bottom: 1.5rem;
+    box-shadow: var(--sombra-media);
+    color: white;
+    font-size: 0.82rem;
+    left: 50%;
+    padding: 0.7rem 1rem;
+    position: fixed;
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+
+  @media (max-width: 800px) {
+    .room-header__details > strong {
+      display: none;
+    }
+
+    .room-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .participants-panel {
+      grid-row: 1;
+      position: static;
+    }
+
+    .participants-list {
+      max-height: 15rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .room-header__inner {
+      min-height: 4rem;
+    }
+
+    .room-header__details {
+      gap: 0.35rem;
+    }
+
+    .room-code {
+      font-size: 0.68rem;
+    }
+
+    .button--small {
+      font-size: 0;
+      padding: 0.35rem;
+      width: 2.3rem;
+    }
+
+    .button--small::after {
+      content: "⧉";
+      font-size: 1rem;
+    }
+
+    .room-main {
+      padding-block: 1rem 2.5rem;
+    }
+
+    .voting-panel {
+      min-height: auto;
+      padding: 1.15rem;
+    }
+
+    .voting-panel__heading {
+      display: block;
+    }
+
+    .room-status {
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .cards-grid {
+      gap: 0.55rem;
+      grid-template-columns: repeat(4, 1fr);
+      padding-block: 1.5rem;
+    }
+
+    :global(.vote-card) {
+      font-size: 1.3rem;
+      min-height: 6.2rem;
+    }
+
+    .results__summary {
+      align-items: start;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .owner-controls .button {
+      width: 100%;
+    }
+
+    .dialog-actions {
+      display: grid;
+    }
+  }
+</style>

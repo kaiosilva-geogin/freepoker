@@ -1,0 +1,66 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<a class:list={["brand", { "brand--compact": compact }]} href="/" aria-label="FreePoker — página inicial">
+  <svg class="brand__mark" viewBox="0 0 36 36" aria-hidden="true">
+    <rect x="5.5" y="3.5" width="25" height="29" rx="4.5"></rect>
+    <path d="M12 13.5h12M12 18h8M12 22.5h12"></path>
+    <circle cx="25" cy="18" r="2.75"></circle>
+  </svg>
+  <span class="brand__name">FreePoker</span>
+</a>
+
+<style>
+  .brand {
+    align-items: center;
+    color: var(--cor-texto);
+    display: inline-flex;
+    gap: 0.65rem;
+    text-decoration: none;
+  }
+
+  .brand__mark {
+    fill: var(--cor-petroleo);
+    height: 2.125rem;
+    width: 2.125rem;
+  }
+
+  .brand__mark rect {
+    fill: var(--cor-petroleo);
+    stroke: var(--cor-petroleo-escuro);
+    stroke-width: 1;
+  }
+
+  .brand__mark path {
+    fill: none;
+    stroke: white;
+    stroke-linecap: round;
+    stroke-width: 1.65;
+  }
+
+  .brand__mark circle {
+    fill: var(--cor-ambar);
+    stroke: var(--cor-petroleo-escuro);
+    stroke-width: 1.2;
+  }
+
+  .brand__name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .brand--compact .brand__mark {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+
+  .brand--compact .brand__name {
+    font-size: 1rem;
+  }
+</style>
