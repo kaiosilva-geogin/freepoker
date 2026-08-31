@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcularMedia, conjuntoCartasValido, rotuloCarta } from "./cartas";
+import { calcularMedia, cartaValida, conjuntoCartasValido, rotuloCarta } from "./cartas";
 
 describe("cartas", () => {
   it("calcula a média ignorando opções não numéricas", () => {
@@ -11,8 +11,11 @@ describe("cartas", () => {
   });
 
   it("identifica conjuntos e apresenta café", () => {
+    expect(conjuntoCartasValido("padrao")).toBe(true);
     expect(conjuntoCartasValido("fibonacci")).toBe(true);
     expect(conjuntoCartasValido("aleatorio")).toBe(false);
+    expect(cartaValida("86")).toBe(true);
+    expect(cartaValida("11")).toBe(false);
     expect(rotuloCarta("cafe")).toBe("☕");
   });
 });

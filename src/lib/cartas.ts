@@ -23,6 +23,10 @@ export function conjuntoCartasValido(valor: string): valor is ConjuntoCartas {
   return valor in CONJUNTOS_CARTAS;
 }
 
+export function cartaValida(valor: string): boolean {
+  return Object.values(CONJUNTOS_CARTAS).some(({ cartas }) => cartas.includes(valor as never));
+}
+
 export function rotuloCarta(valor: string): string {
   return valor === "cafe" ? "☕" : valor;
 }
