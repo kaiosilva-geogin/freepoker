@@ -11,7 +11,7 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
   <div class="room-app" data-room-code={codigo}>
     <header class="room-header">
       <div class="container room-header__inner">
-        <Brand compact />
+        <Brand />
         <div class="room-header__details" aria-live="polite">
           <strong data-room-name>Carregando sala…</strong>
           <span class="room-code"><span data-room-code-text>{codigo}</span></span>
@@ -121,8 +121,12 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
   }
 
   .room-header {
-    background: var(--cor-superficie);
-    border-bottom: 1px solid var(--cor-borda);
+    background: rgb(245 246 243 / 92%);
+    border-bottom: 1px solid rgb(213 220 221 / 80%);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px);
   }
 
   .room-header__inner {
@@ -502,13 +506,14 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
 
   :global(.participant__voted-card) {
     align-items: center;
-    background: var(--cor-petroleo);
-    border: 1px solid var(--cor-petroleo-escuro);
+    background: #fff;
+    border: 1px solid var(--cor-borda-forte);
     border-radius: 0.25rem;
-    box-shadow: 0 2px 4px rgb(7 63 71 / 22%);
+    box-shadow: 0 2px 4px rgb(23 36 42 / 14%);
+    color: var(--cor-texto);
     display: flex;
     flex-direction: column;
-    gap: 0.14rem;
+    font-family: var(--fonte-mono);
     height: 2rem;
     justify-content: center;
     overflow: hidden;
@@ -516,22 +521,19 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
     width: 1.42rem;
   }
 
-  :global(.participant__voted-card::after) {
-    background: var(--cor-ambar);
-    bottom: 0;
-    content: "";
-    height: 0.14rem;
-    left: 0;
+  :global(.participant__voted-card > span:first-child) {
+    font-size: 0.55rem;
+    font-weight: 700;
+    left: 0.17rem;
+    line-height: 1;
     position: absolute;
-    right: 0;
+    top: 0.2rem;
   }
 
-  :global(.participant__voted-card i) {
-    background: rgb(255 255 255 / 88%);
-    border-radius: 99px;
-    display: block;
-    height: 0.11rem;
-    width: 0.58rem;
+  :global(.participant__voted-card > span:last-child) {
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    line-height: 1;
   }
 
   :global(.participant__remove) {
@@ -654,10 +656,6 @@ if (!codigoSalaValido(codigo)) Astro.response.status = 404;
   }
 
   @media (max-width: 560px) {
-    .room-header__inner {
-      min-height: 4rem;
-    }
-
     .room-header__details {
       gap: 0.35rem;
     }

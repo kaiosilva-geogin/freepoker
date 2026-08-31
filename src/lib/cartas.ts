@@ -1,4 +1,8 @@
 export const CONJUNTOS_CARTAS = {
+  padrao: {
+    nome: "Padrão",
+    cartas: ["cafe", "2", "4", "8", "13", "18", "21", "28", "34", "44", "56", "70", "86", "100"],
+  },
   fibonacci: {
     nome: "Fibonacci",
     cartas: ["0", "1", "2", "3", "5", "8", "13", "21", "?", "cafe"],

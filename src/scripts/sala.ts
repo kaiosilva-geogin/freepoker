@@ -224,9 +224,9 @@ function renderizarParticipantes() {
       if (participante.votou) {
         const carta = document.createElement("span");
         carta.className = "participant__voted-card";
-        carta.setAttribute("aria-label", "Voto registrado");
+        carta.setAttribute("aria-label", "Voto registrado: carta 1 de espadas");
         carta.setAttribute("role", "img");
-        carta.innerHTML = '<i></i><i></i><i></i>';
+        carta.innerHTML = "<span>1</span><span>♠</span>";
         acoes.append(carta);
       } else {
         const estadoVoto = document.createElement("span");

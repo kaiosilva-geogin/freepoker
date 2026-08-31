@@ -143,7 +143,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <fieldset class="card-sets">
         <legend>Conjunto de cartas</legend>
         <label>
-          <input type="radio" name="conjuntoCartas" value="fibonacci" checked />
+          <input type="radio" name="conjuntoCartas" value="padrao" checked />
+          <span><strong>Padrão</strong><small>☕ · 2 · 4 · 8 · 13 · 18 · 21 · 28 · 34 · 44 · 56 · 70 · 86 · 100</small></span>
+        </label>
+        <label>
+          <input type="radio" name="conjuntoCartas" value="fibonacci" />
           <span><strong>Fibonacci</strong><small>0 · 1 · 2 · 3 · 5 · 8 · 13 · 21 · ? · ☕</small></span>
         </label>
         <label>
@@ -597,10 +601,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   @media (max-width: 650px) {
-    .site-header__inner {
-      min-height: 4rem;
-    }
-
     .site-nav > a {
       display: none;
     }
